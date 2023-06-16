@@ -9,31 +9,9 @@ node() {
         env.SHORT_COMMIT = "${scmVars.GIT_COMMIT[0..7]}"
         env.GIT_REPO_NAME = scmVars.GIT_URL.replaceFirst(/^.*\/([^\/]+?).git$/, '$1')
     }
-     stage('Run Java Unit Tests') {
-        withMaven(maven: 'M3') {
-            /// Run the maven build
-                sh "mvn -Dmaven.test.failure.ignore=true -Dserver.port=8090 -DskipTests clean package"
-        }
-    }
-
-
-
-    stage('Final') {
-        sh "echo done"
-        sleep 5;
-        sh "cat ${env.GIT_REPO_NAME}.yaml";
-    }
 
     stage('Docker Build') {
             app = docker.build("onekoech/${env.GIT_REPO_NAME}")
-    }
-    stage('Docker Push') {
-        docker.withRegistry('https://957907570595.dkr.ecr.us-east-2.amazonaws.com/', "ecr:us-east-2:awsecr-uat") {
-            env.BUILDVERSION = BUILDVERSION()
-            app.push("uat-${env.SHORT_COMMIT}-${env.BUILDVERSION}")
-            app.push("latest")
-        }
-
     }
 
     stage('Push image') {
