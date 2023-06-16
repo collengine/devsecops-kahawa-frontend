@@ -16,7 +16,8 @@ node() {
 
     stage('Push image') {
         withDockerRegistry([ credentialsId: "docker-hub-creds", url: "" ]) {
-        app.push()
+            env.BUILDVERSION = BUILDVERSION()
+            app.push("uat-${env.SHORT_COMMIT}-${env.BUILDVERSION}")
         }
     } 
 
