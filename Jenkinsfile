@@ -16,7 +16,7 @@ node() {
 
     stage('Push image') {
         withDockerRegistry([ credentialsId: "docker-hub-creds", url: "" ]) {
-        dockerImage.push()
+        app.push()
         }
     } 
 
